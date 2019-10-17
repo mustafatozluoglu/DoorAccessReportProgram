@@ -3,8 +3,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -50,20 +50,23 @@ public class Report {
 
     private static List<String> listWithName = new ArrayList<>();
 
-
     private static Map<String, Long> dailyShiftHashMap = new LinkedHashMap<>();
 
+    private static long allShift = 0;
 
     public static void main(String[] args) throws Exception {
 
 
         readCSVFile(path);
-        //getInsidePersonGivenTime("14:00");
+
+        List<String> l = getEachPersonGivenList(getOneYearAllRecords());
+        for (int i = 0; i < l.size(); i++) {
+            findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName(l.get(i)))));
+        }
 
 
-        //getInsidePersonGivenTime("00:00-00:59");
-
-        findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getThreeMonthsRecordGivenName("YASIN TURGUT"))));
+        //System.out.println(mapToList(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getTenDaysRecordGivenName("Bahattin EREN"))))));
+        //findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getThreeMonthsRecordGivenName("YASIN TURGUT"))));
 
         //System.out.println(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName("YASIN TURGUT")));
         //System.out.println(getDailyList(getDepartureAndArrivalListGivenList(getThreeMonthsRecordGivenName("Hakan Ozturk"))));
@@ -74,7 +77,7 @@ public class Report {
         listWithName = new ArrayList<>();
         allRecordsOneDayList = new ArrayList<>();
 
-        Reader reader = Files.newBufferedReader(Paths.get(path));
+        Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), "utf-8"));
         CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
                 .withHeader("Gen Time", "Seq ID", "Type", "Status", "P", "Reader/Point/Data", "Site", "Card Number", "Account", "Name", "Operator", "Message")
                 .withIgnoreHeaderCase()
@@ -144,7 +147,7 @@ public class Report {
         Calendar cal = Calendar.getInstance();
 
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2; i++) {
             String formatted = sdf.format(cal.getTime());
 
             for (Record record : getOnePersonListGivenName(name.toLowerCase())) {
@@ -358,7 +361,7 @@ public class Report {
         Calendar cal = Calendar.getInstance();
 
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2; i++) {
             String formatted = sdf.format(cal.getTime());
 
             for (Record record : allRecordList) {
@@ -537,6 +540,7 @@ public class Report {
     public static List<List<Record>> getDailyList(List<Record> list) {
 
         List<Record> eachDayList = new ArrayList<>();
+        dailyList = new ArrayList<>();
 
         for (int i = 0; i < list.size() - 1; i++) { // get all element except last element
             Record record1 = list.get(i);
@@ -592,8 +596,7 @@ public class Report {
     public static Map<String, Long> findDailyShift(List<List<Record>> list) throws ParseException {
         dailyShiftHashMap = new LinkedHashMap<>();
 
-        long allShift = 0;
-
+        allShift = 0;
         long dailyShift = 0;
         long shift = 0;
         String start = null;
@@ -661,9 +664,17 @@ public class Report {
             System.out.println(e.getKey() + " => " + e.getValue() + " m");
         }
         System.out.println("All Shift: " + allShift + " m");
-        allShift = 0;
+
         return dailyShiftHashMap;
 
+    }
+
+    public static long getAllShift() {
+        return allShift;
+    }
+
+    public void setAllShift(long allShift) {
+        this.allShift = allShift;
     }
 
     public static long findShiftMinInTwoTime(String start, String end) throws ParseException {
@@ -806,7 +817,7 @@ public class Report {
         return listWithName;
     }
 
-    public static List<Record> getInsidePersonGivenTime(String time) throws ParseException {
+    public static List<Record> getInsidePersonGivenTime(String time) {
         List<Record> l = getOneDayAllRecords();
         List<Record> allList = new ArrayList<>();
         for (Record record : l) {
@@ -871,4 +882,98 @@ public class Report {
 
     }
 
+    public static List<Record> getInsidePersonInTwoTime(String time1, String time2) {
+        List<Record> l = getOneDayAllRecords();
+        List<Record> allList = new ArrayList<>();
+        for (Record record : l) {
+            String point = record.getReaderPointData().toLowerCase();
+            if (point.contains("personel giris") || point.contains("personel cikis") || point.contains("turnike giris") || point.contains("turnike cikis") || point.contains("toplanma alani")) {
+                allList.add(record);
+            }
+        }
+
+        List<Record> newList = new ArrayList<>();
+
+        LocalTime start = LocalTime.parse(time1);
+        LocalTime end = LocalTime.parse(time2);
+
+
+        for (int i = 0; i < allList.size(); i++) {
+            Record r = allList.get(i);
+            LocalTime recordTime = LocalTime.parse(r.getGenTime().substring(11, 16));
+            if (recordTime.isAfter(start) && recordTime.isBefore(end)) {
+                newList.add(r);
+            }
+        }
+
+        boolean inside = false; // person is inside
+        boolean outside = false; // person is outside
+        List<Record> ins = new ArrayList<>();
+
+        for (Record record : newList) {
+            String name = record.getName();
+            String point = record.getReaderPointData().toLowerCase();
+
+            if (point.contains("giris")) {
+                inside = true;
+                outside = false;
+            } else if (record.getName().contains(name) && point.contains("cikis")) {
+                inside = false;
+                outside = true;
+            }
+
+            if (inside && !outside) {
+                if (!isContainsListGivenName(ins, name)) {
+                    ins.add(record);
+                }
+                inside = false;
+                outside = false;
+                name = null;
+            } else if (outside && !inside) {
+                if (isContainsListGivenName(ins, name)) {
+                    removeRecordGivenNameInList(ins, name);
+                }
+            }
+        }
+
+        for (int i = 0; i < ins.size(); i++) { // remove duplicate records
+            for (int j = i + 1; j < ins.size(); j++) {
+                if (ins.get(i).getName().equals(ins.get(j).getName())) {
+                    ins.remove(j);
+                }
+            }
+        }
+
+        return ins;
+    }
+
+    public static List<Map.Entry<String, Long>> mapToList(Map<String, Long> map) {
+        List<Map.Entry<String, Long>> list = new ArrayList<>();
+
+        Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+
+        while (iter.hasNext()) {
+            list.add(iter.next());
+        }
+
+        return list;
+    }
+
+    public static List<String> getEachPersonGivenList(List<Record> list) {
+        List<String> newList = new ArrayList<>();
+
+        for (Record record : list) {
+            newList.add(record.getName());
+        }
+
+        for (int i = 0; i < newList.size(); i++) { // remove duplicate
+            for (int j = i + 1; j < newList.size(); j++) {
+                if (newList.get(i).equals(newList.get(j))) {
+                    newList.remove(j);
+                }
+            }
+        }
+
+        return newList;
+    }
 }

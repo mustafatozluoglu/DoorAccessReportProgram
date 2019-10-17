@@ -1,11 +1,9 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.FileNameMap;
 import java.text.ParseException;
-import java.util.ArrayList;
+import java.time.LocalTime;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -18,8 +16,9 @@ public class MainWindow extends JFrame {
     private JComboBox claimComboBox;
     private JButton findButton;
     private JTextField nameTextField;
-    private JComboBox timeComboBox;
-    private JLabel insidePersonCount;
+    private JFormattedTextField countField;
+    private JFormattedTextField startTimeFormattedTextField;
+    private JFormattedTextField endTimeFormattedTextField;
 
     private List<Record> list = new ArrayList<>();
 
@@ -34,18 +33,21 @@ public class MainWindow extends JFrame {
     }
 
     private void initialize() {
+
         chooseFileButton.addActionListener(actionEvent -> {
+
             list = new ArrayList<>();
             JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
             int r = j.showSaveDialog(null);
             String fileExtension = "";
-            if (j.getSelectedFile() != null)
+            if (j.getSelectedFile() != null) {
                 fileExtension = j.getSelectedFile().getAbsolutePath().substring(j.getSelectedFile().getAbsolutePath().lastIndexOf('.') + 1);
-
+            }
             if (fileExtension.equals("csv")) {
                 if (r == JFileChooser.APPROVE_OPTION) {
                     selectedFilePath = j.getSelectedFile().getAbsolutePath();
+                    countField.setText("");
                 } else {
                     selectedFilePath = "";
                 }
@@ -68,236 +70,189 @@ public class MainWindow extends JFrame {
             String name = nameTextField.getText().toLowerCase();
 
             if (claimComboBox.getSelectedItem().equals("Get Inside Person")) {
-                if (timeComboBox.getSelectedItem().equals("All Day")) {
-                    try {
-                        list = report.findPersonInside(report.getOneDayAllRecords());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("00:00-00:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("00:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("01:00-01:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("01:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("02:00-02:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("02:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("03:00-03:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("03:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("04:00-04:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("04:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("05:00-05:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("05:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("06:00-06:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("06:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("07:00-07:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("07:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("08:00-08:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("08:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("09:00-09:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("09:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("10:00-10:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("10:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("11:00-11:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("11:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("12:00-12:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("12:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("13:00-13:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("13:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("14:00-14:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("14:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("15:00-15:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("15:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("16:00-16:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("16:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("17:00-17:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("17:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("18:00-18:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("18:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("19:00-19:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("19:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("20:00-20:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("20:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("21:00-21:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("21:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("22:00-22:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("22:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (timeComboBox.getSelectedItem().equals("23:00-23:59")) {
-                    try {
-                        list = report.getInsidePersonGivenTime("23:59");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+
+                if (startTimeFormattedTextField.getText().equals("Start Time (HH:MM)") || startTimeFormattedTextField.getText().equals("") || startTimeFormattedTextField.getText() == null) {
+                    list = report.findPersonInside(report.getOneDayAllRecords());
+                } else {
+                    String start = startTimeFormattedTextField.getText();
+                    String end = endTimeFormattedTextField.getText();
+                    if (start.length() != 5 || end.length() != 5 || start.charAt(2) != ':' || end.charAt(2) != ':' || start.matches(".*[a-zA-Z]+.*") || end.matches(".*[a-zA-Z]+.*")) {
+                        JOptionPane.showMessageDialog(new Frame(), "Invalid time!");
+                    } else {
+                        LocalTime t1 = LocalTime.parse(start);
+                        LocalTime t2 = LocalTime.parse(end);
+                        if (t1.isAfter(t2)) {
+                            JOptionPane.showMessageDialog(new Frame(), "Start Time cannot be after End Time!");
+                        } else {
+                            list = report.getInsidePersonInTwoTime(start, end);
+                        }
                     }
                 }
 
+                int count = list.size();
+                countField.setText("Inside Person Count: " + count);
                 textArea1.setText(report.getListWithName(list).toString());
 
             }
 
             if (claimComboBox.getSelectedItem().equals("Get All Records")) {
+
                 list = report.getAllRecordList();
+                int count = list.size();
+                countField.setText("All Records Count: " + count);
                 textArea1.setText(list.toString());
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Day Record")) {
+
                 if (name.equals("name") || name == null || name.equals("")) {
                     list = report.getOneDayAllRecords();
                 } else {
                     list = report.getOneDayRecordGivenName(name);
                 }
 
+                int count = list.size();
+                countField.setText("1 Day Record Count: " + count);
                 textArea1.setText(list.toString());
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 10 Days Record")) {
+
                 if (name.equals("name") || name == null || name.equals("")) {
                     list = report.getTenDaysAllRecords();
                 } else {
                     list = report.getTenDaysRecordGivenName(name);
                 }
-
+                int count = list.size();
+                countField.setText("10 Day Record Count: " + count);
                 textArea1.setText(list.toString());
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Month Record")) {
+
                 if (name.equals("name") || name == null || name.equals("")) {
                     list = report.getOneMonthAllRecords();
                 } else {
                     list = report.getOneMonthRecordGivenName(name);
                 }
-
+                int count = list.size();
+                countField.setText("1 Mounth Record Count: " + count);
                 textArea1.setText(list.toString());
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 3 Months Record")) {
+
                 if (name.equals("name") || name == null || name.equals("")) {
                     list = report.getThreeMonthsAllRecords();
                 } else {
                     list = report.getThreeMonthsRecordGivenName(name);
                 }
 
+                int count = list.size();
+                countField.setText("3 Months Record Count: " + count);
                 textArea1.setText(list.toString());
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Year Record")) {
+
                 if (name.equals("name") || name == null || name.equals("")) {
                     list = report.getOneYearAllRecords();
                 } else {
                     list = report.getOneYearRecordGivenName(name);
                 }
 
+                int count = list.size();
+                countField.setText("1 Year Record Count: " + count);
                 textArea1.setText(list.toString());
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 10 Days Shift")) {
+
                 textArea1.setText("");
                 String s = "";
+
+                Map<String, Long> map = new LinkedHashMap<>();
                 try {
-                    s = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getTenDaysRecordGivenName(name))))).toString();
+                    map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getTenDaysRecordGivenName(name)))));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
-                textArea1.setText("IMPROVING...");
+                Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                while (iter.hasNext()) {
+                    s += iter.next() + " m\n";
+                }
+
+
+                textArea1.setText(s);
+                countField.setText("All Shift: " + report.getAllShift() + " m");
+            }
+
+            if (claimComboBox.getSelectedItem().equals("Get 1 Month Shift")) {
+
+                textArea1.setText("");
+                String s = "";
+
+                Map<String, Long> map = new LinkedHashMap<>();
+                try {
+                    map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getOneMonthRecordGivenName(name)))));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                while (iter.hasNext()) {
+                    s += iter.next() + " m\n";
+                }
+
+
+                textArea1.setText(s);
+                countField.setText("All Shift: " + report.getAllShift() + " m");
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 3 Months Shift")) {
-                textArea1.setText("IMPROVING...");
+
+                textArea1.setText("");
+                String s = "";
+
+                Map<String, Long> map = new LinkedHashMap<>();
+                try {
+                    map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getThreeMonthsRecordGivenName(name)))));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                while (iter.hasNext()) {
+                    s += iter.next() + " m\n";
+                }
+
+
+                textArea1.setText(s);
+                countField.setText("All Shift: " + report.getAllShift() + " m");
 
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Year Shift")) {
-                textArea1.setText("IMPROVING...");
+
+                textArea1.setText("");
+                String s = "";
+
+                Map<String, Long> map = new LinkedHashMap<>();
+                try {
+                    map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getOneYearRecordGivenName(name)))));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                while (iter.hasNext()) {
+                    s += iter.next() + " m\n";
+                }
+
+
+                textArea1.setText(s);
+                countField.setText("All Shift: " + report.getAllShift() + " m");
 
             }
 
@@ -313,9 +268,11 @@ public class MainWindow extends JFrame {
             }
 
             if (claimComboBox.getSelectedItem().equals("Get Inside Person")) {
-                timeComboBox.setEnabled(true);
+                startTimeFormattedTextField.setEnabled(true);
+                endTimeFormattedTextField.setEnabled(true);
             } else {
-                timeComboBox.setEnabled(false);
+                startTimeFormattedTextField.setEnabled(false);
+                endTimeFormattedTextField.setEnabled(false);
             }
         });
 
@@ -327,12 +284,12 @@ public class MainWindow extends JFrame {
 
 
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("MainWindow");
+            JFrame frame = new JFrame("Reporting Program");
             frame.setContentPane(new MainWindow().panel1);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.pack();
             frame.setVisible(true);
-            frame.setSize(1000, 750);
+            frame.setSize(1500, 750);
             frame.setLocationRelativeTo(null);
         });
     }
