@@ -1,4 +1,5 @@
 
+import javafx.util.Pair;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Report {
 
-    private static final String path = "C:\\Users\\mustafa.tozluoglu\\Desktop\\small.csv";
+    private static final String path = "C:\\Users\\mustafa.tozluoglu\\Desktop\\big.csv";
 
     private static List<Record> allRecordList = new ArrayList<>();
 
@@ -58,11 +59,12 @@ public class Report {
 
 
         readCSVFile(path);
+        findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName("haydar"))));
 
-        List<String> l = getEachPersonGivenList(getOneYearAllRecords());
+       /* List<String> l = getEachPersonGivenList(getOneYearAllRecords());
         for (int i = 0; i < l.size(); i++) {
             findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName(l.get(i)))));
-        }
+        } */
 
 
         //System.out.println(mapToList(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getTenDaysRecordGivenName("Bahattin EREN"))))));
@@ -147,7 +149,7 @@ public class Report {
         Calendar cal = Calendar.getInstance();
 
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             String formatted = sdf.format(cal.getTime());
 
             for (Record record : getOnePersonListGivenName(name.toLowerCase())) {
@@ -361,7 +363,7 @@ public class Report {
         Calendar cal = Calendar.getInstance();
 
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             String formatted = sdf.format(cal.getTime());
 
             for (Record record : allRecordList) {
@@ -571,29 +573,107 @@ public class Report {
             } else {
                 eachDayList.add(0, record1);
                 dailyList.add(eachDayList);
+                eachDayList = new ArrayList<>();
                 break;
             }
         }
 
-        for (int i = 0; i < dailyList.size(); i++) { // cikisla baslayan gunlerde bir onceki gundeki son girisi al.
+        if(eachDayList.size() != 0){ // tek gun olunca son yukaridaki dongude son else'e girmeyince dailylist bos kaliyor. Tek gun olunca eklemek icin bu if yazildi
+            dailyList.add(eachDayList);
+        }
+
+        for (int i = 0; i < dailyList.size(); i++) { // if eachdaylist size=0 remove
+            if (dailyList.get(i).size() == 0) {
+                dailyList.remove(i);
+            }
+        }
+
+
+        for (int i = 0; i < dailyList.size(); i++) { // cikisla baslayan gunun ilk elemanini onceki gunun sonuna at
+            if (i == dailyList.size() - 1) { // son liste yine cikisla basliyosa girisle baslayana kadar bastan sil
+                for (int m = 0; m < dailyList.get(i).size(); m++) {
+                    Record record1 = dailyList.get(i).get(0); // listenin ilk elemani
+                    if (record1.getReaderPointData().toLowerCase().contains("cikis")) { // ilk elemanda cikis varsa sil
+                        dailyList.get(i).remove(0);
+                    }
+                }
+            } else {
+
+                List<Record> temp = dailyList.get(i); // gunluk liste
+                Record r1 = temp.get(0); // gunluk listenin ilk elemani
+                String point = r1.getReaderPointData().toLowerCase();
+
+                if (point.contains("cikis")) {
+                    Record removedRecord = dailyList.get(i).remove(0);
+                    dailyList.get(i + 1).add(removedRecord);
+                }
+
+            }
+        }
+
+
+
+        /*for (int i = 0; i < dailyList.size(); i++) { // cikisla baslayan gunlerde bir onceki gundeki son girisi al.
             if (dailyList.get(i).size() != 0) {
                 String point = dailyList.get(i).get(0).getReaderPointData().toLowerCase();
                 if (point.contains("cikis") && i != dailyList.size() - 1) {
-                    if (dailyList.get(i + 1).get(0).getReaderPointData().toLowerCase().contains("giris")) {
+                    if (dailyList.get(i + 1).get(0).getReaderPointData().toLowerCase().contains("giris") && dailyList.get(i + 1).get(0).getGenTime().substring(11, 13).equals("23")) { // son giris saat 23'ten onceyse alma
                         Record r = dailyList.get(i + 1).remove(dailyList.get(i + 1).size() - 1);
                         dailyList.get(i).add(0, r);
                     }
                 }
-                if (point.contains("cikis") && i == dailyList.size() - 1) {
-                    dailyList.remove(i);
+                if (point.contains("cikis") && i == dailyList.size() - 1) { // dailylist'in ilk nesnesi cikis ile basliyosa sil ya da en basta birden fazla cikis varsa sil yani gun girisle baslasin
+                    for (int m = 0; m < dailyList.get(i).size(); m++) {
+                        Record record1 = dailyList.get(i).get(0); // listenin ilk record'u
+
+                        if (record1.getReaderPointData().toLowerCase().contains("cikis")) { // ilk record'da cikis varsa sil
+                            dailyList.get(i).remove(0);
+                        }
+                    }
+
+                    dailyList.get(i).remove(0);
                 }
             }
         }
+
+        for (int i = 0; i < dailyList.size(); i++) {
+            if(dailyList.get(i).size() == 0){
+                dailyList.remove(i);
+            }
+        }*/
+
+       /* for (int i = 0; i < dailyList.size(); i++) { // girisle biten gunlerde bir sonraki gundeki son cikisi al.
+            if (dailyList.get(i).size() != 0) {
+                int size = dailyList.get(i).size();
+                String point = dailyList.get(i).get(size - 1).getReaderPointData().toLowerCase();
+                if (point.contains("giris") && i != dailyList.size() - 1) {
+                    if (dailyList.get(i + 1).get(dailyList.get(i + 1).size() - 1).getReaderPointData().toLowerCase().contains("cikis") && dailyList.get(i + 1).get(dailyList.get(i + 1).size() - 1).getGenTime().substring(11, 13).equals("00")) { // son cikis saat 00'dan sonraysa alma
+                        Record r = dailyList.get(i + 1).remove(0);
+                        dailyList.get(i).add(r);
+                    }
+                }
+                if (point.contains("giris") && i == dailyList.size() - 1) { // eachdailylist'in son nesnesi giris ile bitiyosa sil ya da en sonda birden fazla giris varsa sil yani gun cikisla bitsin
+                    for (int m = 0; m < dailyList.get(i).size(); m++) {
+                        Record record1 = dailyList.get(i).get(size - 1); // listenin son record'u
+
+                        if (record1.getReaderPointData().toLowerCase().contains("cikis")) { // ilk record'da cikis varsa sil
+                            dailyList.get(i).remove(size - 1);
+                        }
+                    }
+
+                    dailyList.get(i).remove(size - 1);
+                }
+            }
+        }*/
+
 
         return dailyList;
     }
 
     public static Map<String, Long> findDailyShift(List<List<Record>> list) throws ParseException {
+        //TODO: G4S guvenlik firmasi oldugu icin normal mesaiden farkli hesaplanacak(cikis - giris seklinde hesaplanmasi gerekiyor)
+
+
         dailyShiftHashMap = new LinkedHashMap<>();
 
         allShift = 0;
@@ -602,7 +682,6 @@ public class Report {
         String start = null;
         String end = null;
         String name = null;
-
         String date = null;
 
         for (List<Record> dailyList : list) {
@@ -648,7 +727,7 @@ public class Report {
         }
 
 
-        Iterator<Map.Entry<String, Long>> iter = dailyShiftHashMap.entrySet().iterator();
+        /*Iterator<Map.Entry<String, Long>> iter = dailyShiftHashMap.entrySet().iterator();
         Map.Entry<String, Long> prev = null;
         while (iter.hasNext()) { // mesaisi 15dk'dan az olanlar bir onceki gune eklendi.
             Map.Entry<String, Long> next = iter.next();
@@ -657,7 +736,7 @@ public class Report {
                 iter.remove();
             }
             prev = next;
-        }
+        }*/
 
 
         for (Map.Entry e : dailyShiftHashMap.entrySet()) { // print daily shift
