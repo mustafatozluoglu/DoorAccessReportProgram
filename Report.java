@@ -1,28 +1,24 @@
 
-import javafx.util.Pair;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static java.util.Map.*;
 
 /**
  * created by mustafa.tozluoglu on 4.10.2019
  */
 public class Report {
 
-    private static final String path = "C:\\Users\\mustafa.tozluoglu\\Desktop\\big.csv";
+    private static final String path = "C:\\Users\\mustafa.tozluoglu\\Desktop\\deneeee.csv";
 
     private static List<Record> allRecordList = new ArrayList<>();
 
@@ -57,9 +53,34 @@ public class Report {
 
     public static void main(String[] args) throws Exception {
 
-
         readCSVFile(path);
-        findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName("haydar"))));
+
+        /*Map<String, Long> map = new LinkedHashMap<>();
+        List<String> nameList = getOneMonthNameList();
+        String s = "";
+        for (String s1 : nameList) {
+            try {
+                map = (findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneMonthRecordGivenName(s1)))));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+            while (iter.hasNext()) {
+                s += iter.next() + " m\n";
+            }
+            s += "-------------------------------------------------\n";
+        }
+
+        System.out.println(s);
+        double t2 = System.currentTimeMillis();
+
+        System.out.println(t2-t);
+        */
+
+        //System.out.println(getOneMonthRecordGivenName("erce"));
+
+
+        System.out.println(getMonthlyShift(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName("LEVENT SAYAR"))))));
 
        /* List<String> l = getEachPersonGivenList(getOneYearAllRecords());
         for (int i = 0; i < l.size(); i++) {
@@ -498,13 +519,25 @@ public class Report {
         return newList;
     }
 
-    public static List<Record> getFirmAllRecord(String firm) {
+    public static List<Record> getFirmAllRecordOneMonth(String firm) {
         firmAllRecordsOneMonthList = new ArrayList<>();
 
-        for (Record record : allRecordList) {
-            if (record.getName().contains(firm)) {
-                firmAllRecordsOneMonthList.add(record);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+
+
+        for (int i = 0; i < 30; i++) {
+            String formatted = sdf.format(cal.getTime());
+
+            for (Record record : allRecordList) {
+                String recordFormattedDate = record.getGenTime().substring(0, 10);
+                String formattedDate = formatted.substring(0, 10);
+
+                if (recordFormattedDate.contains(formattedDate) && record.getName().toLowerCase().contains(firm.toLowerCase())) {
+                    firmAllRecordsOneMonthList.add(record);
+                }
             }
+            cal.add(Calendar.DAY_OF_YEAR, -1);
         }
 
         return firmAllRecordsOneMonthList;
@@ -578,7 +611,7 @@ public class Report {
             }
         }
 
-        if(eachDayList.size() != 0){ // tek gun olunca son yukaridaki dongude son else'e girmeyince dailylist bos kaliyor. Tek gun olunca eklemek icin bu if yazildi
+        if (eachDayList.size() != 0) { // tek gun olunca son yukaridaki dongude son else'e girmeyince dailylist bos kaliyor. Tek gun olunca eklemek icin bu if yazildi
             dailyList.add(eachDayList);
         }
 
@@ -598,16 +631,17 @@ public class Report {
                     }
                 }
             } else {
-
                 List<Record> temp = dailyList.get(i); // gunluk liste
                 Record r1 = temp.get(0); // gunluk listenin ilk elemani
                 String point = r1.getReaderPointData().toLowerCase();
 
                 if (point.contains("cikis")) {
                     Record removedRecord = dailyList.get(i).remove(0);
-                    dailyList.get(i + 1).add(removedRecord);
+                    if (Integer.parseInt(removedRecord.getGenTime().substring(0, 2)) == (Integer.parseInt(dailyList.get(i + 1).get(0).getGenTime().substring(0, 2)) + 1)
+                            && (dailyList.get(i + 1).get(0).getGenTime().substring(11, 13).equals("23") || dailyList.get(i + 1).get(0).getGenTime().substring(11, 13).equals("00"))) { // silinen record ile eklenecek listenin tarihi arasinda bir gun varsa ve saat 23'ten sonra ise ekle
+                        dailyList.get(i + 1).add(removedRecord);
+                    }
                 }
-
             }
         }
 
@@ -666,6 +700,11 @@ public class Report {
             }
         }*/
 
+        for (int i = 0; i < dailyList.size(); i++) { // if eachdaylist size=0 remove
+            if (dailyList.get(i).size() == 0) {
+                dailyList.remove(i);
+            }
+        }
 
         return dailyList;
     }
@@ -739,7 +778,7 @@ public class Report {
         }*/
 
 
-        for (Map.Entry e : dailyShiftHashMap.entrySet()) { // print daily shift
+        for (Entry e : dailyShiftHashMap.entrySet()) { // print daily shift
             System.out.println(e.getKey() + " => " + e.getValue() + " m");
         }
         System.out.println("All Shift: " + allShift + " m");
@@ -827,13 +866,11 @@ public class Report {
             }
         }
 
-        for (int i = 0; i < insideList.size(); i++) { // insideList'i insidePersonList'e ekler
-            insidePersonList.add(insideList.get(i));
-        }
+        // insideList'i insidePersonList'e ekler
+        insidePersonList.addAll(insideList);
 
-        for (int i = 0; i < toplanmaAlaniList.size(); i++) { // toplanma alanindakileri insidePersonList'e ekler
-            insidePersonList.add(toplanmaAlaniList.get(i));
-        }
+        // toplanma alanindakileri insidePersonList'e ekler
+        insidePersonList.addAll(toplanmaAlaniList);
 
 
         for (int i = 0; i < insidePersonList.size(); i++) { // remove duplicate records
@@ -1031,9 +1068,7 @@ public class Report {
 
         Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
 
-        while (iter.hasNext()) {
-            list.add(iter.next());
-        }
+        while (iter.hasNext()) list.add(iter.next());
 
         return list;
     }
@@ -1055,4 +1090,109 @@ public class Report {
 
         return newList;
     }
+
+    public static List<String> getTenDaysNameList() {
+        List<String> nameList = new ArrayList<>();
+
+        for (Record r : getTenDaysAllRecords()) {
+            if (!nameList.contains(r.getName()) && !r.getName().contains("ZIYARETCI")) {
+                nameList.add(r.getName());
+            }
+        }
+
+        return nameList;
+    }
+
+    public static List<String> getOneMonthNameList() {
+        List<String> nameList = new ArrayList<>();
+
+        for (Record r : getOneMonthAllRecords()) {
+            if (!nameList.contains(r.getName()) && !r.getName().contains("ZIYARETCI")) {
+                nameList.add(r.getName());
+            }
+        }
+
+        return nameList;
+    }
+
+    public static List<String> getThreeMonthsNameList() {
+        List<String> nameList = new ArrayList<>();
+
+        for (Record r : getThreeMonthsAllRecords()) {
+            if (!nameList.contains(r.getName()) && !r.getName().contains("ZIYARETCI")) {
+                nameList.add(r.getName());
+            }
+        }
+
+        return nameList;
+    }
+
+    public static List<String> getOneYearNameList() {
+        List<String> nameList = new ArrayList<>();
+
+        for (Record r : getOneYearAllRecords()) {
+            if (!nameList.contains(r.getName()) && !r.getName().contains("ZIYARETCI")) {
+                nameList.add(r.getName());
+            }
+        }
+
+        return nameList;
+    }
+
+    public static String minToHour(int min) {
+        int hours = min / 60;
+        int minutes = min % 60;
+        return String.format("%dh:%02dm", hours, minutes);
+    }
+
+    public static String getMonthlyShift(Map<String, Long> map) {
+        String s = "";
+        long monthlyShift = 0;
+
+        List<Entry<String, Long>> l = new ArrayList<>();
+
+        Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            l.add(iter.next());
+        }
+
+        for (int i = 0; i < l.size() - 1; i++) {
+            String previousMonth = l.get(i).getKey().substring(3, 5);
+            String nextMonth = l.get(i + 1).getKey().substring(3, 5);
+
+            if (previousMonth.equals(nextMonth)) {
+                monthlyShift += l.get(i).getValue();
+            } else {
+                monthlyShift += l.get(i).getValue();
+                if (monthlyShift == 0)
+                    monthlyShift = l.get(i).getValue();
+                s += l.get(i).getKey().substring(3, 10) + " => " + minToHour((int)monthlyShift) + "\n";
+                monthlyShift = 0;
+            }
+        }
+
+        monthlyShift = 0;
+        for (int i = l.size() - 1; i > 0; i--) {
+            String previousMonth = l.get(i).getKey().substring(3, 5);
+            String nextMonth = l.get(i - 1).getKey().substring(3, 5);
+
+            if (previousMonth.equals(nextMonth)) {
+                monthlyShift += l.get(i).getValue();
+            } else {
+                monthlyShift += l.get(i).getValue();
+                if (monthlyShift == 0)
+                    monthlyShift = l.get(i).getValue();
+                s += l.get(i).getKey().substring(3, 10) + " => " + minToHour((int)monthlyShift) + "\n";
+                break;
+            }
+        }
+
+        if (l.size() == 1) {
+            long l1 = l.get(0).getValue();
+            s += l.get(0).getKey().substring(3, 10) + " => " + minToHour((int)l1) + "\n";
+        }
+
+        return s;
+    }
+
 }

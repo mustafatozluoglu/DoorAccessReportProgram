@@ -16,7 +16,7 @@ public class MainWindow extends JFrame {
     private JComboBox claimComboBox;
     private JButton findButton;
     private JTextField nameTextField;
-    private JFormattedTextField countField;
+    private JTextArea countField;
     private JFormattedTextField startTimeFormattedTextField;
     private JFormattedTextField endTimeFormattedTextField;
 
@@ -167,11 +167,10 @@ public class MainWindow extends JFrame {
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 10 Days Shift")) {
-
                 textArea1.setText("");
                 String s = "";
-
                 Map<String, Long> map = new LinkedHashMap<>();
+
                 try {
                     map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getTenDaysRecordGivenName(name)))));
                 } catch (ParseException e) {
@@ -183,17 +182,18 @@ public class MainWindow extends JFrame {
                     s += iter.next() + " m\n";
                 }
 
+                countField.setText("All Shift: " + report.minToHour((int)report.getAllShift()));
+
 
                 textArea1.setText(s);
-                countField.setText("All Shift: " + report.getAllShift() + " m");
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Month Shift")) {
 
                 textArea1.setText("");
                 String s = "";
-
                 Map<String, Long> map = new LinkedHashMap<>();
+
                 try {
                     map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getOneMonthRecordGivenName(name)))));
                 } catch (ParseException e) {
@@ -205,9 +205,9 @@ public class MainWindow extends JFrame {
                     s += iter.next() + " m\n";
                 }
 
+                countField.setText("All Shift: " + report.minToHour((int)report.getAllShift()) + "\n\nMonthly Shifts:\n" + report.getMonthlyShift(map));
 
                 textArea1.setText(s);
-                countField.setText("All Shift: " + report.getAllShift() + " m");
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 3 Months Shift")) {
@@ -227,10 +227,8 @@ public class MainWindow extends JFrame {
                     s += iter.next() + " m\n";
                 }
 
-
+                countField.setText("All Shift: " + report.minToHour((int)report.getAllShift()) + "\n\nMonthly Shifts:\n" + report.getMonthlyShift(map));
                 textArea1.setText(s);
-                countField.setText("All Shift: " + report.getAllShift() + " m");
-
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Year Shift")) {
@@ -250,10 +248,32 @@ public class MainWindow extends JFrame {
                     s += iter.next() + " m\n";
                 }
 
-
+                countField.setText("All Shift: " + report.minToHour((int)report.getAllShift()) + "\n\nMonthly Shifts:\n" + report.getMonthlyShift(map));
                 textArea1.setText(s);
-                countField.setText("All Shift: " + report.getAllShift() + " m");
+            }
 
+            if (claimComboBox.getSelectedItem().equals("Get 1 Month Shift All Records")) {
+                textArea1.setText("");
+                String s = "";
+                Map<String, Long> map = new LinkedHashMap<>();
+
+                List<String> nameList = report.getOneMonthNameList();
+
+                for (String s1 : nameList) {
+                    try {
+                        map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getOneMonthRecordGivenName(s1)))));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                    while (iter.hasNext()) {
+                        s += iter.next() + " m\n";
+                    }
+                    s += "-------------------------------------------------\n";
+                }
+
+                countField.setText("All Shift: Not Calculated!");
+                textArea1.setText(s);
             }
 
         });
@@ -273,6 +293,12 @@ public class MainWindow extends JFrame {
             } else {
                 startTimeFormattedTextField.setEnabled(false);
                 endTimeFormattedTextField.setEnabled(false);
+            }
+
+            if (claimComboBox.getSelectedItem().equals("Get 1 Month Shift All Records")) {
+                nameTextField.setEnabled(false);
+            } else {
+                nameTextField.setEnabled(true);
             }
         });
 
