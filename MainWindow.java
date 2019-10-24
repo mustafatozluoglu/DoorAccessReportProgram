@@ -29,7 +29,16 @@ public class MainWindow extends JFrame {
     private String selectedFilePath;
 
     public MainWindow() {
-        claimComboBox.setMaximumRowCount(25);
+
+        claimComboBox.setMaximumRowCount(20);
+
+        ImageIcon searchIcon = new ImageIcon("searchIcon.png");
+        ImageIcon fileIcon = new ImageIcon("fileIcon.png");
+        Icon loadingGif = new ImageIcon("loadingGif.gif");
+
+        chooseFileButton.setIcon(fileIcon);
+        findButton.setIcon(searchIcon);
+
         initialize();
 
     }
@@ -100,7 +109,7 @@ public class MainWindow extends JFrame {
                 if (count == 0) {
                     textArea1.setText("No Records!");
                 } else {
-                    textArea1.setText(report.getListWithName(list).toString());
+                    textArea1.setText(report.getListWithName(list).toString().replace(",", "").replace("[", "").replace("]", ""));
                 }
             }
 
@@ -113,7 +122,7 @@ public class MainWindow extends JFrame {
                 if (count == 0) {
                     textArea1.setText("No Records!");
                 } else {
-                    textArea1.setText(list.toString());
+                    textArea1.setText(list.toString().replace(",", "").replace("[", "").replace("]", ""));
                 }
             }
 
@@ -131,7 +140,7 @@ public class MainWindow extends JFrame {
                 if (count == 0) {
                     textArea1.setText("No Records!");
                 } else {
-                    textArea1.setText(list.toString());
+                    textArea1.setText(list.toString().replace(",", "").replace("[", "").replace("]", ""));
                 }
             }
 
@@ -148,7 +157,7 @@ public class MainWindow extends JFrame {
                 if (count == 0) {
                     textArea1.setText("No Records!");
                 } else {
-                    textArea1.setText(list.toString());
+                    textArea1.setText(list.toString().replace(",", "").replace("[", "").replace("]", ""));
                 }
             }
 
@@ -165,7 +174,7 @@ public class MainWindow extends JFrame {
                 if (count == 0) {
                     textArea1.setText("No Records!");
                 } else {
-                    textArea1.setText(list.toString());
+                    textArea1.setText(list.toString().replace(",", "").replace("[", "").replace("]", ""));
                 }
             }
 
@@ -183,7 +192,7 @@ public class MainWindow extends JFrame {
                 if (count == 0) {
                     textArea1.setText("No Records!");
                 } else {
-                    textArea1.setText(list.toString());
+                    textArea1.setText(list.toString().replace(",", "").replace("[", "").replace("]", ""));
                 }
             }
 
@@ -201,7 +210,7 @@ public class MainWindow extends JFrame {
                 if (count == 0) {
                     textArea1.setText("No Records!");
                 } else {
-                    textArea1.setText(list.toString());
+                    textArea1.setText(list.toString().replace(",", "").replace("[", "").replace("]", ""));
                 }
             }
 
