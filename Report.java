@@ -82,7 +82,12 @@ public class Report {
 
         //System.out.println(getOneMonthRecordGivenName("erce"));
 
-        System.out.println(getListDivideByName(getTenDaysRecordGivenName("ERCE")));
+        List<List<Record>> l = getListDivideByName(getThreeMonthsRecordGivenName("ERCE"));
+        for (int i=0;i<l.size();i++){
+            System.out.println(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(l.get(i)))));
+        }
+
+
 
 
         //System.out.println(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName("haydar isleyen")))));

@@ -20,6 +20,8 @@ public class MainWindow extends JFrame {
     private JFormattedTextField startTimeFormattedTextField;
     private JFormattedTextField endTimeFormattedTextField;
 
+    private int dialogResult;
+
     private List<Record> list = new ArrayList<>();
 
     private Report report = new Report();
@@ -27,7 +29,7 @@ public class MainWindow extends JFrame {
     private String selectedFilePath;
 
     public MainWindow() {
-
+        claimComboBox.setMaximumRowCount(25);
         initialize();
 
     }
@@ -92,9 +94,14 @@ public class MainWindow extends JFrame {
                 }
 
                 int count = list.size();
-                countField.setText("Inside Person Count: " + count);
-                textArea1.setText(report.getListWithName(list).toString());
 
+                countField.setText("Inside Person Count: " + count);
+
+                if (count == 0) {
+                    textArea1.setText("No Records!");
+                } else {
+                    textArea1.setText(report.getListWithName(list).toString());
+                }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get All Records")) {
@@ -102,7 +109,12 @@ public class MainWindow extends JFrame {
                 list = report.getAllRecordList();
                 int count = list.size();
                 countField.setText("All Records Count: " + count);
-                textArea1.setText(list.toString());
+
+                if (count == 0) {
+                    textArea1.setText("No Records!");
+                } else {
+                    textArea1.setText(list.toString());
+                }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Day Record")) {
@@ -115,7 +127,12 @@ public class MainWindow extends JFrame {
 
                 int count = list.size();
                 countField.setText("1 Day Record Count: " + count);
-                textArea1.setText(list.toString());
+
+                if (count == 0) {
+                    textArea1.setText("No Records!");
+                } else {
+                    textArea1.setText(list.toString());
+                }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 10 Days Record")) {
@@ -127,7 +144,12 @@ public class MainWindow extends JFrame {
                 }
                 int count = list.size();
                 countField.setText("10 Day Record Count: " + count);
-                textArea1.setText(list.toString());
+
+                if (count == 0) {
+                    textArea1.setText("No Records!");
+                } else {
+                    textArea1.setText(list.toString());
+                }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Month Record")) {
@@ -139,7 +161,12 @@ public class MainWindow extends JFrame {
                 }
                 int count = list.size();
                 countField.setText("1 Mounth Record Count: " + count);
-                textArea1.setText(list.toString());
+
+                if (count == 0) {
+                    textArea1.setText("No Records!");
+                } else {
+                    textArea1.setText(list.toString());
+                }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 3 Months Record")) {
@@ -152,7 +179,12 @@ public class MainWindow extends JFrame {
 
                 int count = list.size();
                 countField.setText("3 Months Record Count: " + count);
-                textArea1.setText(list.toString());
+
+                if (count == 0) {
+                    textArea1.setText("No Records!");
+                } else {
+                    textArea1.setText(list.toString());
+                }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Year Record")) {
@@ -165,12 +197,17 @@ public class MainWindow extends JFrame {
 
                 int count = list.size();
                 countField.setText("1 Year Record Count: " + count);
-                textArea1.setText(list.toString());
+
+                if (count == 0) {
+                    textArea1.setText("No Records!");
+                } else {
+                    textArea1.setText(list.toString());
+                }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 10 Days Shift")) {
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!");
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!", "Information!", 0);
                 } else {
                     textArea1.setText("");
                     String s = "";
@@ -188,13 +225,18 @@ public class MainWindow extends JFrame {
                     }
 
                     countField.setText("All Shift: " + report.minToHour((int) report.getAllShift()));
-                    textArea1.setText(s);
+
+                    if (map.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
                 }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Month Shift")) {
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!");
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!", "Information!", 0);
                 } else {
                     textArea1.setText("");
                     String s = "";
@@ -212,13 +254,18 @@ public class MainWindow extends JFrame {
                     }
 
                     countField.setText("All Shift: " + report.minToHour((int) report.getAllShift()) + "\n\nMonthly Shifts:\n" + report.getMonthlyShift(map));
-                    textArea1.setText(s);
+
+                    if (map.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
                 }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 3 Months Shift")) {
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!");
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!", "Information!", 0);
                 } else {
                     textArea1.setText("");
                     String s = "";
@@ -236,13 +283,18 @@ public class MainWindow extends JFrame {
                     }
 
                     countField.setText("All Shift: " + report.minToHour((int) report.getAllShift()) + "\n\nMonthly Shifts:\n" + report.getMonthlyShift(map));
-                    textArea1.setText(s);
+
+                    if (map.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
                 }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Year Shift")) {
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!");
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!", "Information!", 0);
                 } else {
                     textArea1.setText("");
                     String s = "";
@@ -260,37 +312,52 @@ public class MainWindow extends JFrame {
                     }
 
                     countField.setText("All Shift: " + report.minToHour((int) report.getAllShift()) + "\n\nMonthly Shifts:\n" + report.getMonthlyShift(map));
-                    textArea1.setText(s);
+
+                    if (map.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
                 }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Month Shift All Records")) {
-                textArea1.setText("");
-                String s = "";
-                Map<String, Long> map = new LinkedHashMap<>();
+                int dialogButton = JOptionPane.YES_NO_OPTION;
+                dialogResult = JOptionPane.showConfirmDialog(this, "This operation take 2 minute. Do you want to continue anyway?", "Confirmation", dialogButton);
 
-                List<String> nameList = report.getOneMonthNameList();
+                if (dialogResult == 0) {
+                    textArea1.setText("");
+                    String s = "";
+                    Map<String, Long> map = new LinkedHashMap<>();
 
-                for (String s1 : nameList) {
-                    try {
-                        map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getOneMonthRecordGivenName(s1)))));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                    List<String> nameList = report.getOneMonthNameList();
+
+                    for (String s1 : nameList) {
+                        try {
+                            map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getOneMonthRecordGivenName(s1)))));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                        while (iter.hasNext()) {
+                            s += iter.next() + " m\n";
+                        }
+                        s += "-------------------------------------------------\n";
                     }
-                    Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
-                    while (iter.hasNext()) {
-                        s += iter.next() + " m\n";
+
+                    countField.setText("All Shift: Not Calculated!");
+
+                    if (map.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
                     }
-                    s += "-------------------------------------------------\n";
                 }
-
-                countField.setText("All Shift: Not Calculated!");
-                textArea1.setText(s);
             }
 
             if (claimComboBox.getSelectedItem().equals("Get Firm 1 Day Record")) {
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!");
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
                 } else {
                     List<List<Record>> l = report.getListDivideByName(report.getOneDayRecordGivenName(name.toLowerCase()));
                     String s = "";
@@ -304,14 +371,19 @@ public class MainWindow extends JFrame {
                         s += "---------------------------------------------------------------------------------------------------------\n";
                     }
 
-                    textArea1.setText(s);
                     countField.setText("All Shift: Not Calculated!");
+
+                    if (l.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
                 }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get Firm 10 Days Record")) {
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!");
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
                 } else {
                     List<List<Record>> l = report.getListDivideByName(report.getTenDaysRecordGivenName(name.toLowerCase()));
                     String s = "";
@@ -325,14 +397,19 @@ public class MainWindow extends JFrame {
                         s += "---------------------------------------------------------------------------------------------------------\n";
                     }
 
-                    textArea1.setText(s);
                     countField.setText("All Shift: Not Calculated!");
+
+                    if (l.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
                 }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get Firm 1 Month Record")) {
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!");
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
                 } else {
                     List<List<Record>> l = report.getListDivideByName(report.getOneMonthRecordGivenName(name.toLowerCase()));
                     String s = "";
@@ -346,14 +423,19 @@ public class MainWindow extends JFrame {
                         s += "---------------------------------------------------------------------------------------------------------\n";
                     }
 
-                    textArea1.setText(s);
                     countField.setText("All Shift: Not Calculated!");
+
+                    if (l.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
                 }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get Firm 3 Months Record")) {
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!");
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
                 } else {
                     List<List<Record>> l = report.getListDivideByName(report.getThreeMonthsRecordGivenName(name.toLowerCase()));
                     String s = "";
@@ -367,14 +449,19 @@ public class MainWindow extends JFrame {
                         s += "---------------------------------------------------------------------------------------------------------\n";
                     }
 
-                    textArea1.setText(s);
                     countField.setText("All Shift: Not Calculated!");
+
+                    if (l.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
                 }
             }
 
             if (claimComboBox.getSelectedItem().equals("Get Firm 1 Year Record")) {
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!");
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
                 } else {
                     List<List<Record>> l = report.getListDivideByName(report.getOneYearRecordGivenName(name.toLowerCase()));
                     String s = "";
@@ -388,8 +475,151 @@ public class MainWindow extends JFrame {
                         s += "---------------------------------------------------------------------------------------------------------\n";
                     }
 
-                    textArea1.setText(s);
                     countField.setText("All Shift: Not Calculated!");
+
+                    if (l.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
+                }
+            }
+
+            if (claimComboBox.getSelectedItem().equals("Get Firm 10 Days Shift")) {
+                if (name.equals("name") || name == null || name.equals("")) {
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
+                } else {
+                    textArea1.setText("");
+                    String s = "";
+                    Map<String, Long> map;
+                    List<List<Record>> l = report.getListDivideByName(report.getTenDaysRecordGivenName(name.toLowerCase()));
+
+                    try {
+                        map = new LinkedHashMap<>();
+                        for (int i = 0; i < l.size(); i++) {
+                            map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(l.get(i)))));
+
+                            Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                            while (iter.hasNext()) {
+                                s += iter.next() + " m\n";
+                            }
+                            s += "----------------------------------------------------------\n";
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    countField.setText("All Shift: Not Calculated!");
+
+                    if (l.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
+                }
+            }
+
+            if (claimComboBox.getSelectedItem().equals("Get Firm 1 Month Shift")) {
+                if (name.equals("name") || name == null || name.equals("")) {
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
+                } else {
+                    textArea1.setText("");
+                    String s = "";
+                    Map<String, Long> map;
+                    List<List<Record>> l = report.getListDivideByName(report.getOneMonthRecordGivenName(name.toLowerCase()));
+
+                    try {
+                        map = new LinkedHashMap<>();
+                        for (int i = 0; i < l.size(); i++) {
+                            map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(l.get(i)))));
+
+                            Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                            while (iter.hasNext()) {
+                                s += iter.next() + " m\n";
+                            }
+                            s += "----------------------------------------------------------\n";
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    countField.setText("All Shift: Not Calculated!");
+
+                    if (l.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
+                }
+            }
+
+            if (claimComboBox.getSelectedItem().equals("Get Firm 3 Months Shift")) {
+                if (name.equals("name") || name == null || name.equals("")) {
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
+                } else {
+                    textArea1.setText("");
+                    String s = "";
+                    Map<String, Long> map;
+                    List<List<Record>> l = report.getListDivideByName(report.getThreeMonthsRecordGivenName(name.toLowerCase()));
+
+                    try {
+                        map = new LinkedHashMap<>();
+                        for (int i = 0; i < l.size(); i++) {
+                            map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(l.get(i)))));
+
+                            Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                            while (iter.hasNext()) {
+                                s += iter.next() + " m\n";
+                            }
+                            s += "----------------------------------------------------------\n";
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    countField.setText("All Shift: Not Calculated!");
+                    if (l.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
+                }
+            }
+
+            if (claimComboBox.getSelectedItem().equals("Get Firm 1 Year Shift")) {
+                if (name.equals("name") || name == null || name.equals("")) {
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
+                } else {
+                    textArea1.setText("");
+                    String s = "";
+                    Map<String, Long> map;
+                    List<List<Record>> l = report.getListDivideByName(report.getOneYearRecordGivenName(name.toLowerCase()));
+
+                    try {
+                        map = new LinkedHashMap<>();
+                        for (int i = 0; i < l.size(); i++) {
+                            map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(l.get(i)))));
+
+                            Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                            while (iter.hasNext()) {
+                                s += iter.next() + " m\n";
+                            }
+                            s += "----------------------------------------------------------\n";
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    countField.setText("All Shift: Not Calculated!");
+
+                    if (l.size() == 0) {
+                        textArea1.setText("No Records!");
+                    } else {
+                        textArea1.setText(s);
+                    }
                 }
             }
 
@@ -398,7 +628,7 @@ public class MainWindow extends JFrame {
         nameTextField.setEnabled(false);
 
         claimComboBox.addActionListener(actionEvent -> {
-            if (claimComboBox.getSelectedItem().equals("Get Inside Person") || claimComboBox.getSelectedItem().equals("Get All Records")) {
+            if (claimComboBox.getSelectedItem().equals("Get Inside Person") || claimComboBox.getSelectedItem().equals("Get All Records") || claimComboBox.getSelectedItem().equals("Get 1 Month Shift All Records")) {
                 nameTextField.setEnabled(false);
             } else {
                 nameTextField.setEnabled(true);
@@ -412,11 +642,6 @@ public class MainWindow extends JFrame {
                 endTimeFormattedTextField.setEnabled(false);
             }
 
-            if (claimComboBox.getSelectedItem().equals("Get 1 Month Shift All Records")) {
-                nameTextField.setEnabled(false);
-            } else {
-                nameTextField.setEnabled(true);
-            }
         });
 
 
