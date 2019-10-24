@@ -18,7 +18,7 @@ import static java.util.Map.*;
  */
 public class Report {
 
-    private static final String path = "C:\\Users\\mustafa.tozluoglu\\Desktop\\deneeee.csv";
+    private static final String path = "C:\\Users\\mustafa.tozluoglu\\Desktop\\big.csv";
 
     private static List<Record> allRecordList = new ArrayList<>();
 
@@ -43,6 +43,8 @@ public class Report {
 
     private static List<List<Record>> dailyList = new ArrayList<>();
 
+    private static List<List<Record>> personList = new ArrayList<>();
+
     private static List<Record> insidePersonList = new ArrayList<>();
 
     private static List<String> listWithName = new ArrayList<>();
@@ -54,6 +56,7 @@ public class Report {
     public static void main(String[] args) throws Exception {
 
         readCSVFile(path);
+
 
         /*Map<String, Long> map = new LinkedHashMap<>();
         List<String> nameList = getOneMonthNameList();
@@ -79,8 +82,10 @@ public class Report {
 
         //System.out.println(getOneMonthRecordGivenName("erce"));
 
+        System.out.println(getListDivideByName(getTenDaysRecordGivenName("ERCE")));
 
-        System.out.println(getMonthlyShift(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName("LEVENT SAYAR"))))));
+
+        //System.out.println(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName("haydar isleyen")))));
 
        /* List<String> l = getEachPersonGivenList(getOneYearAllRecords());
         for (int i = 0; i < l.size(); i++) {
@@ -95,7 +100,7 @@ public class Report {
         //System.out.println(getDailyList(getDepartureAndArrivalListGivenList(getThreeMonthsRecordGivenName("Hakan Ozturk"))));
     }
 
-    public static void readCSVFile(String path) throws Exception { // read csv file and parse and store allRecordList
+    public static int readCSVFile(String path) throws Exception { // read csv file and parse and store allRecordList
         allRecordList = new ArrayList<>();
         listWithName = new ArrayList<>();
         allRecordsOneDayList = new ArrayList<>();
@@ -123,6 +128,8 @@ public class Report {
             allRecordList.add(record);
         }
         allRecordList.remove(0); // remove header which is "Gen Time", "Seq ID", "Type"...etc.
+
+        return allRecordList.size();
     }
 
     public static List<Record> getOnePersonListGivenName(String name) {
@@ -573,7 +580,6 @@ public class Report {
     }
 
     public static List<List<Record>> getDailyList(List<Record> list) {
-
         List<Record> eachDayList = new ArrayList<>();
         dailyList = new ArrayList<>();
 
@@ -615,7 +621,7 @@ public class Report {
             dailyList.add(eachDayList);
         }
 
-        for (int i = 0; i < dailyList.size(); i++) { // if eachdaylist size=0 remove
+        for (int i = 0; i < dailyList.size(); i++) { // if eachdaylist size=0 then remove
             if (dailyList.get(i).size() == 0) {
                 dailyList.remove(i);
             }
@@ -646,61 +652,7 @@ public class Report {
         }
 
 
-
-        /*for (int i = 0; i < dailyList.size(); i++) { // cikisla baslayan gunlerde bir onceki gundeki son girisi al.
-            if (dailyList.get(i).size() != 0) {
-                String point = dailyList.get(i).get(0).getReaderPointData().toLowerCase();
-                if (point.contains("cikis") && i != dailyList.size() - 1) {
-                    if (dailyList.get(i + 1).get(0).getReaderPointData().toLowerCase().contains("giris") && dailyList.get(i + 1).get(0).getGenTime().substring(11, 13).equals("23")) { // son giris saat 23'ten onceyse alma
-                        Record r = dailyList.get(i + 1).remove(dailyList.get(i + 1).size() - 1);
-                        dailyList.get(i).add(0, r);
-                    }
-                }
-                if (point.contains("cikis") && i == dailyList.size() - 1) { // dailylist'in ilk nesnesi cikis ile basliyosa sil ya da en basta birden fazla cikis varsa sil yani gun girisle baslasin
-                    for (int m = 0; m < dailyList.get(i).size(); m++) {
-                        Record record1 = dailyList.get(i).get(0); // listenin ilk record'u
-
-                        if (record1.getReaderPointData().toLowerCase().contains("cikis")) { // ilk record'da cikis varsa sil
-                            dailyList.get(i).remove(0);
-                        }
-                    }
-
-                    dailyList.get(i).remove(0);
-                }
-            }
-        }
-
-        for (int i = 0; i < dailyList.size(); i++) {
-            if(dailyList.get(i).size() == 0){
-                dailyList.remove(i);
-            }
-        }*/
-
-       /* for (int i = 0; i < dailyList.size(); i++) { // girisle biten gunlerde bir sonraki gundeki son cikisi al.
-            if (dailyList.get(i).size() != 0) {
-                int size = dailyList.get(i).size();
-                String point = dailyList.get(i).get(size - 1).getReaderPointData().toLowerCase();
-                if (point.contains("giris") && i != dailyList.size() - 1) {
-                    if (dailyList.get(i + 1).get(dailyList.get(i + 1).size() - 1).getReaderPointData().toLowerCase().contains("cikis") && dailyList.get(i + 1).get(dailyList.get(i + 1).size() - 1).getGenTime().substring(11, 13).equals("00")) { // son cikis saat 00'dan sonraysa alma
-                        Record r = dailyList.get(i + 1).remove(0);
-                        dailyList.get(i).add(r);
-                    }
-                }
-                if (point.contains("giris") && i == dailyList.size() - 1) { // eachdailylist'in son nesnesi giris ile bitiyosa sil ya da en sonda birden fazla giris varsa sil yani gun cikisla bitsin
-                    for (int m = 0; m < dailyList.get(i).size(); m++) {
-                        Record record1 = dailyList.get(i).get(size - 1); // listenin son record'u
-
-                        if (record1.getReaderPointData().toLowerCase().contains("cikis")) { // ilk record'da cikis varsa sil
-                            dailyList.get(i).remove(size - 1);
-                        }
-                    }
-
-                    dailyList.get(i).remove(size - 1);
-                }
-            }
-        }*/
-
-        for (int i = 0; i < dailyList.size(); i++) { // if eachdaylist size=0 remove
+        for (int i = 0; i < dailyList.size(); i++) { // if eachdaylist size=0 then remove
             if (dailyList.get(i).size() == 0) {
                 dailyList.remove(i);
             }
@@ -711,7 +663,6 @@ public class Report {
 
     public static Map<String, Long> findDailyShift(List<List<Record>> list) throws ParseException {
         //TODO: G4S guvenlik firmasi oldugu icin normal mesaiden farkli hesaplanacak(cikis - giris seklinde hesaplanmasi gerekiyor)
-
 
         dailyShiftHashMap = new LinkedHashMap<>();
 
@@ -765,26 +716,7 @@ public class Report {
             dailyShift = 0;
         }
 
-
-        /*Iterator<Map.Entry<String, Long>> iter = dailyShiftHashMap.entrySet().iterator();
-        Map.Entry<String, Long> prev = null;
-        while (iter.hasNext()) { // mesaisi 15dk'dan az olanlar bir onceki gune eklendi.
-            Map.Entry<String, Long> next = iter.next();
-            if (next.getValue() < 15 && prev != null) {
-                prev.setValue(prev.getValue() + next.getValue());
-                iter.remove();
-            }
-            prev = next;
-        }*/
-
-
-        for (Entry e : dailyShiftHashMap.entrySet()) { // print daily shift
-            System.out.println(e.getKey() + " => " + e.getValue() + " m");
-        }
-        System.out.println("All Shift: " + allShift + " m");
-
         return dailyShiftHashMap;
-
     }
 
     public static long getAllShift() {
@@ -1152,11 +1084,11 @@ public class Report {
         List<Entry<String, Long>> l = new ArrayList<>();
 
         Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
-        while (iter.hasNext()) {
+        while (iter.hasNext()) { // add each element from map to arraylist
             l.add(iter.next());
         }
 
-        for (int i = 0; i < l.size() - 1; i++) {
+        for (int i = 0; i < l.size() - 1; i++) { // calculate monthly shift except last month
             String previousMonth = l.get(i).getKey().substring(3, 5);
             String nextMonth = l.get(i + 1).getKey().substring(3, 5);
 
@@ -1166,13 +1098,13 @@ public class Report {
                 monthlyShift += l.get(i).getValue();
                 if (monthlyShift == 0)
                     monthlyShift = l.get(i).getValue();
-                s += l.get(i).getKey().substring(3, 10) + " => " + minToHour((int)monthlyShift) + "\n";
+                s += l.get(i).getKey().substring(3, 10) + " => " + minToHour((int) monthlyShift) + "\n";
                 monthlyShift = 0;
             }
         }
 
         monthlyShift = 0;
-        for (int i = l.size() - 1; i > 0; i--) {
+        for (int i = l.size() - 1; i > 0; i--) { // get last month calculate
             String previousMonth = l.get(i).getKey().substring(3, 5);
             String nextMonth = l.get(i - 1).getKey().substring(3, 5);
 
@@ -1182,17 +1114,55 @@ public class Report {
                 monthlyShift += l.get(i).getValue();
                 if (monthlyShift == 0)
                     monthlyShift = l.get(i).getValue();
-                s += l.get(i).getKey().substring(3, 10) + " => " + minToHour((int)monthlyShift) + "\n";
+                s += l.get(i).getKey().substring(3, 10) + " => " + minToHour((int) monthlyShift) + "\n";
                 break;
             }
         }
 
         if (l.size() == 1) {
             long l1 = l.get(0).getValue();
-            s += l.get(0).getKey().substring(3, 10) + " => " + minToHour((int)l1) + "\n";
+            s += l.get(0).getKey().substring(3, 10) + " => " + minToHour((int) l1) + "\n";
         }
 
         return s;
+    }
+
+    public static List<List<Record>> getListDivideByName(List<Record> list) {
+        List<Record> eachPersonList = new ArrayList<>();
+        personList = new ArrayList<>();
+
+        for (int i = 0; i < list.size(); i++) {
+            Record record1 = list.get(i);
+            if (!isContain(personList, record1.getName().substring(record1.getName().indexOf(" ") + 1))) {
+                eachPersonList.add(record1);
+                for (int j = 1; j < list.size(); j++) {
+                    Record record2 = list.get(j);
+
+                    String name1 = record1.getName().substring(record1.getName().indexOf(" ") + 1);
+                    String name2 = record2.getName().substring(record2.getName().indexOf(" ") + 1);
+
+                    if (name1.equalsIgnoreCase(name2)) {
+                        eachPersonList.add(record2);
+                    }
+                }
+                personList.add(eachPersonList);
+                eachPersonList = new ArrayList<>();
+            }
+        }
+
+        return personList;
+    }
+
+    public static boolean isContain(List<List<Record>> list, String name) {
+        boolean b = false;
+
+        for (int i = 0; i < list.size(); i++) {
+            if (name.equalsIgnoreCase(list.get(i).get(0).getName().substring(list.get(i).get(0).getName().indexOf(" ") + 1))) {
+                b = true;
+            }
+        }
+
+        return b;
     }
 
 }
