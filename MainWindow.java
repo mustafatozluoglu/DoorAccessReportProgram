@@ -19,6 +19,8 @@ public class MainWindow extends JFrame {
     private JTextArea countField;
     private JFormattedTextField startTimeFormattedTextField;
     private JFormattedTextField endTimeFormattedTextField;
+    private JComboBox departureTollgate;
+    private JComboBox arrivalTollgate;
 
     private int dialogResult;
 
@@ -29,6 +31,35 @@ public class MainWindow extends JFrame {
     private String selectedFilePath;
 
     public MainWindow() {
+
+        String[] claims = new String[]{"Get Inside Person",
+                "Get All Records",
+                "Get 1 Day Record",
+                "Get 10 Days Record",
+                "Get 1 Month Record",
+                "Get 3 Months Record",
+                "Get 1 Year Record",
+                "Get 10 Days Shift",
+                "Get 1 Month Shift",
+                "Get 3 Months Shift",
+                "Get 1 Year Shift",
+                "Get 1 Month Shift All Records",
+                "Get Firm 1 Day Record",
+                "Get Firm 10 Days Record",
+                "Get Firm 1 Month Record",
+                "Get Firm 3 Months Record",
+                "Get Firm 1 Year Record",
+                "Get Firm 10 Days Shift",
+                "Get Firm 1 Month Shift",
+                "Get Firm 3 Months Shift",
+                "Get Firm 1 Year Shift"
+        };
+
+        for (int i = 0; i < claims.length; i++) {
+            claimComboBox.addItem(claims[i]);
+        }
+        claimComboBox.setRenderer(new SeparatorRenderer(claimComboBox.getRenderer(), 0, 1, 6, 10, 11, 16));
+
 
         claimComboBox.setMaximumRowCount(20);
 
@@ -659,7 +690,6 @@ public class MainWindow extends JFrame {
 
     public static void main(String[] args) {
 
-
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Reporting Program");
             frame.setContentPane(new MainWindow().panel1);
@@ -669,5 +699,44 @@ public class MainWindow extends JFrame {
             frame.setSize(1500, 750);
             frame.setLocationRelativeTo(null);
         });
+    }
+
+    private static class SeparatorRenderer implements ListCellRenderer {
+        private ListCellRenderer delegate;
+        private JPanel container;
+        private JLabel label;
+        private HashSet<Integer> separatorIndexes;
+        private boolean cellRendererSelectionBackgroundEnabled;
+        private boolean isSelected;
+
+        public SeparatorRenderer(ListCellRenderer delegate, Integer... separatorIndexes) {
+            this.delegate = delegate;
+            this.separatorIndexes = new HashSet<Integer>(Arrays.asList(separatorIndexes));
+            container = new JPanel();
+            label = new JLabel() {
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                }
+            };
+            container.setLayout(new BorderLayout());
+            container.setOpaque(false);
+            container.add(label);
+            container.add(new JSeparator(), BorderLayout.SOUTH);
+        }
+
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel c = (JLabel) delegate.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (index >= 0 && separatorIndexes.contains(index)) {
+                this.isSelected = isSelected;
+                label.setText(c.getText());
+                label.setForeground(c.getForeground());
+                label.setBackground(c.getBackground());
+                label.setBorder(c.getBorder());
+                label.setFont(c.getFont());
+                label.setOpaque(isSelected && !cellRendererSelectionBackgroundEnabled);
+                return container;
+            }
+            return c;
+        }
     }
 }

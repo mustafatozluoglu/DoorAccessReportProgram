@@ -40,6 +40,7 @@ public class Report {
     private static List<Record> firmAllRecordsOneMonthList = new ArrayList<>();
 
     private static List<Record> departureAndArrivalList = new ArrayList<>();
+    private static List<Record> tollgateList = new ArrayList<>();
 
     private static List<List<Record>> dailyList = new ArrayList<>();
 
@@ -58,44 +59,8 @@ public class Report {
         readCSVFile(path);
 
 
-        /*Map<String, Long> map = new LinkedHashMap<>();
-        List<String> nameList = getOneMonthNameList();
-        String s = "";
-        for (String s1 : nameList) {
-            try {
-                map = (findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneMonthRecordGivenName(s1)))));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
-            while (iter.hasNext()) {
-                s += iter.next() + " m\n";
-            }
-            s += "-------------------------------------------------\n";
-        }
 
-        System.out.println(s);
-        double t2 = System.currentTimeMillis();
-
-        System.out.println(t2-t);
-        */
-
-        //System.out.println(getOneMonthRecordGivenName("erce"));
-
-        List<List<Record>> l = getListDivideByName(getThreeMonthsRecordGivenName("ERCE"));
-        for (int i=0;i<l.size();i++){
-            System.out.println(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(l.get(i)))));
-        }
-
-
-
-
-        //System.out.println(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName("haydar isleyen")))));
-
-       /* List<String> l = getEachPersonGivenList(getOneYearAllRecords());
-        for (int i = 0; i < l.size(); i++) {
-            findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName(l.get(i)))));
-        } */
+        System.out.println(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName("HAYDAR")))));
 
 
         //System.out.println(mapToList(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getTenDaysRecordGivenName("Bahattin EREN"))))));
@@ -575,8 +540,23 @@ public class Report {
         departureAndArrivalList = new ArrayList<>();
 
         for (Record record : list) {
-            String point = record.getReaderPointData().toLowerCase();
-            if (point.contains("personel giris") || point.contains("personel cikis") || point.contains("turnike giris") || point.contains("turnike cikis")) {
+            String point = record.getReaderPointData().toLowerCase().substring(15);
+            if (point.equals("personel giris") || point.equals("personel cikis") || point.equals("turnike giris") || point.equals("turnike cikis")) {
+                departureAndArrivalList.add(record);
+            }
+        }
+
+        return departureAndArrivalList;
+    }
+
+    public static List<Record> getGivenTollgateListGivenList(List<Record> list, String departure, String arrival) {
+        tollgateList = new ArrayList<>();
+        departure = departure.toLowerCase();
+        arrival = arrival.toLowerCase();
+
+        for (Record record : list) {
+            String point = record.getReaderPointData().toLowerCase().substring(15);
+            if (point.equals(departure) || point.equals(arrival)) {
                 departureAndArrivalList.add(record);
             }
         }
@@ -648,8 +628,8 @@ public class Report {
 
                 if (point.contains("cikis")) {
                     Record removedRecord = dailyList.get(i).remove(0);
-                    if (Integer.parseInt(removedRecord.getGenTime().substring(0, 2)) == (Integer.parseInt(dailyList.get(i + 1).get(0).getGenTime().substring(0, 2)) + 1)
-                            && (dailyList.get(i + 1).get(0).getGenTime().substring(11, 13).equals("23") || dailyList.get(i + 1).get(0).getGenTime().substring(11, 13).equals("00"))) { // silinen record ile eklenecek listenin tarihi arasinda bir gun varsa ve saat 23'ten sonra ise ekle
+                    if ((Integer.parseInt(removedRecord.getGenTime().substring(0, 2)) == (Integer.parseInt(dailyList.get(i + 1).get(0).getGenTime().substring(0, 2)) + 1))
+                            && (removedRecord.getGenTime().substring(11, 13).equals("23") || removedRecord.getGenTime().substring(11, 13).equals("00"))) { // silinen record ile eklenecek listenin tarihi arasinda bir gun varsa ve saat 23'ten sonra ise ekle
                         dailyList.get(i + 1).add(removedRecord);
                     }
                 }
