@@ -92,8 +92,8 @@ public class MainWindow extends JFrame {
         arrivalTollgate.setRenderer(new SeparatorRenderer(arrivalTollgate.getRenderer(), 1, 3, 5, 9, 11, 15));
 
 
-        ImageIcon searchIcon = new ImageIcon("searchIcon.png");
-        ImageIcon fileIcon = new ImageIcon("fileIcon.png");
+        ImageIcon searchIcon = new ImageIcon("C:\\Users\\mustafa.tozluoglu\\IdeaProjects\\GAMA\\searchIcon.png");
+        ImageIcon fileIcon = new ImageIcon("C:\\Users\\mustafa.tozluoglu\\IdeaProjects\\GAMA\\fileIcon.png");
         Icon loadingGif = new ImageIcon("loadingGif.gif");
 
         chooseFileButton.setIcon(fileIcon);

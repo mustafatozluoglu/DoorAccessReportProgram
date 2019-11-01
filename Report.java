@@ -60,7 +60,7 @@ public class Report {
 
 
 
-        System.out.println(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getOneYearRecordGivenName("HAYDAR")))));
+        System.out.println(findDailyShift(getDailyList(getGivenTollgateListGivenList(getOneYearRecordGivenName("HAYDAR"),"SAHA_Turnike Giris","SAHA_Turnike Cikis")),"SAHA_Turnike Giris","SAHA_Turnike Cikis"));
 
 
         //System.out.println(mapToList(findDailyShift(getDailyList(getDepartureAndArrivalListGivenList(getTenDaysRecordGivenName("Bahattin EREN"))))));
@@ -557,11 +557,11 @@ public class Report {
         for (Record record : list) {
             String point = record.getReaderPointData().toLowerCase().substring(15);
             if (point.equals(departure) || point.equals(arrival)) {
-                departureAndArrivalList.add(record);
+                tollgateList.add(record);
             }
         }
 
-        return departureAndArrivalList;
+        return tollgateList;
     }
 
     public static List<List<Record>> getDailyList(List<Record> list) {
@@ -646,7 +646,7 @@ public class Report {
         return dailyList;
     }
 
-    public static Map<String, Long> findDailyShift(List<List<Record>> list) throws ParseException {
+    public static Map<String, Long> findDailyShift(List<List<Record>> list,String entrance, String exit) throws ParseException { // turnike giris, cikis or personel giris, cikis 'a gore hesaplandi
         //TODO: G4S guvenlik firmasi oldugu icin normal mesaiden farkli hesaplanacak(cikis - giris seklinde hesaplanmasi gerekiyor)
 
         dailyShiftHashMap = new LinkedHashMap<>();
@@ -667,10 +667,10 @@ public class Report {
                 name = r1.getName();
                 date = r1.getGenTime().substring(0, 10); // dd.mm.yyyy
 
-                String point1 = r1.getReaderPointData().toLowerCase(); // giris or cikis
-                String point2 = r2.getReaderPointData().toLowerCase(); // giris or cikis
+                String point1 = r1.getReaderPointData().toLowerCase();
+                String point2 = r2.getReaderPointData().toLowerCase();
 
-                if (point1.contains("giris") && point2.contains("cikis")) {
+                if (point1.contains(entrance.toLowerCase()) && point2.contains(exit.toLowerCase())) {
                     start = r1.getGenTime();
                     end = r2.getGenTime();
 
@@ -680,11 +680,11 @@ public class Report {
                     start = null;
                     end = null;
                     shift = 0;
-                } /*else if (point1.contains("giris") && point2.contains("giris")) {
+                } /*else if (point1.contains(entrance) && point2.contains(exit)) {
                     System.out.println("Cikis kaydi bulunamadi!");
                     start = null;
                     end = null;
-                } else if (point1.contains("cikis") && point2.contains("cikis")) {
+                } else if (point1.contains(entrance) && point2.contains(exit)) {
                     System.out.println("Giris kaydi bulunamadi!");
                     start = null;
                     end = null;
