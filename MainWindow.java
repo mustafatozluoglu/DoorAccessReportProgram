@@ -21,6 +21,7 @@ public class MainWindow extends JFrame {
     private JFormattedTextField endTimeFormattedTextField;
     private JComboBox departureTollgate;
     private JComboBox arrivalTollgate;
+    private JProgressBar progressBar1;
 
     private int dialogResult;
 
@@ -39,10 +40,10 @@ public class MainWindow extends JFrame {
                 "Get 1 Month Record",
                 "Get 3 Months Record",
                 "Get 1 Year Record",
-                "Get 10 Days Shift",
-                "Get 1 Month Shift",
-                "Get 3 Months Shift",
-                "Get 1 Year Shift",
+                "Get Person 10 Days Shift",
+                "Get Person 1 Month Shift",
+                "Get Person 3 Months Shift",
+                "Get Person 1 Year Shift",
                 "Get 1 Month Shift All Records",
                 "Get Firm 1 Day Record",
                 "Get Firm 10 Days Record",
@@ -54,14 +55,42 @@ public class MainWindow extends JFrame {
                 "Get Firm 3 Months Shift",
                 "Get Firm 1 Year Shift"
         };
-
         for (int i = 0; i < claims.length; i++) {
             claimComboBox.addItem(claims[i]);
         }
         claimComboBox.setRenderer(new SeparatorRenderer(claimComboBox.getRenderer(), 0, 1, 6, 10, 11, 16));
-
-
         claimComboBox.setMaximumRowCount(20);
+
+
+        String[] tollgate = new String[]{"Turnike Giris",
+                "Turnike Cikis",
+                "PERSONEL GIRIS",
+                "PERSONEL CIKIS",
+                "SAHA_Turnike Giris",
+                "SAHA_Turnike Cikis",
+                "Reader 1",
+                "Reader 2",
+                "Reader 3",
+                "Reader 4",
+                "WORKSHOP ANA GIRIS",
+                "WORKSHOP ARKA KAPI",
+                "Reader 1-ECB ANA GIRIS",
+                "Reader 2-ENGINEERING ROOM",
+                "Reader 3-CONTROL ROOM",
+                "Reader 4-CONTROL ROOM",
+                "WAREHOUSE ANA GIRIS",
+                "SECURITY ROOM",
+                "TOPLANMA ALANI"
+        };
+        for (int i = 0; i < tollgate.length; i++) {
+            departureTollgate.addItem(tollgate[i]);
+            arrivalTollgate.addItem(tollgate[i]);
+        }
+        departureTollgate.setMaximumRowCount(15);
+        arrivalTollgate.setMaximumRowCount(15);
+        departureTollgate.setRenderer(new SeparatorRenderer(departureTollgate.getRenderer(), 1, 3, 5, 9, 11, 15));
+        arrivalTollgate.setRenderer(new SeparatorRenderer(arrivalTollgate.getRenderer(), 1, 3, 5, 9, 11, 15));
+
 
         ImageIcon searchIcon = new ImageIcon("searchIcon.png");
         ImageIcon fileIcon = new ImageIcon("fileIcon.png");
@@ -115,12 +144,24 @@ public class MainWindow extends JFrame {
 
             if (claimComboBox.getSelectedItem().equals("Get Inside Person")) {
 
-                if (startTimeFormattedTextField.getText().equals("Start Time (HH:MM)") || startTimeFormattedTextField.getText().equals("") || startTimeFormattedTextField.getText() == null) {
+                if (startTimeFormattedTextField.getText().equals("HH:MM") || startTimeFormattedTextField.getText().equals("") || startTimeFormattedTextField.getText() == null) {
                     list = report.findPersonInside(report.getOneDayAllRecords());
                 } else {
                     String start = startTimeFormattedTextField.getText();
                     String end = endTimeFormattedTextField.getText();
-                    if (start.length() != 5 || end.length() != 5 || start.charAt(2) != ':' || end.charAt(2) != ':' || start.matches(".*[a-zA-Z]+.*") || end.matches(".*[a-zA-Z]+.*")) {
+                    int startHour = 0;
+                    int startMin = 0;
+                    int endHour = 0;
+                    int endMin = 0;
+                    if (!start.contains(" ") && !end.contains(" ")) {
+                        startHour = Integer.parseInt(startTimeFormattedTextField.getText().substring(0, 2));
+                        startMin = Integer.parseInt(startTimeFormattedTextField.getText().substring(3));
+                        endHour = Integer.parseInt(endTimeFormattedTextField.getText().substring(0, 2));
+                        endMin = Integer.parseInt(endTimeFormattedTextField.getText().substring(3));
+                    }
+
+
+                    if (start.contains(" ") || end.contains(" ") || startHour > 23 || startMin > 59 || endHour > 23 || endMin > 59 || start.length() != 5 || end.length() != 5 || start.charAt(2) != ':' || end.charAt(2) != ':' || start.matches(".*[a-zA-Z]+.*") || end.matches(".*[a-zA-Z]+.*")) {
                         JOptionPane.showMessageDialog(new Frame(), "Invalid time!");
                     } else {
                         LocalTime t1 = LocalTime.parse(start);
@@ -245,16 +286,19 @@ public class MainWindow extends JFrame {
                 }
             }
 
-            if (claimComboBox.getSelectedItem().equals("Get 10 Days Shift")) {
+            if (claimComboBox.getSelectedItem().equals("Get Person 10 Days Shift")) {
+                String entrance = departureTollgate.getSelectedItem().toString();
+                String exit = arrivalTollgate.getSelectedItem().toString();
+
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!", "Information!", 0);
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Person Name!", "Information!", 0);
                 } else {
                     textArea1.setText("");
                     String s = "";
                     Map<String, Long> map = new LinkedHashMap<>();
 
                     try {
-                        map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getTenDaysRecordGivenName(name)))));
+                        map = (report.findDailyShift(report.getDailyList(report.getGivenTollgateListGivenList(report.getTenDaysRecordGivenName(name), entrance, exit)), entrance, exit));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -274,16 +318,19 @@ public class MainWindow extends JFrame {
                 }
             }
 
-            if (claimComboBox.getSelectedItem().equals("Get 1 Month Shift")) {
+            if (claimComboBox.getSelectedItem().equals("Get Person 1 Month Shift")) {
+                String entrance = departureTollgate.getSelectedItem().toString();
+                String exit = arrivalTollgate.getSelectedItem().toString();
+
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!", "Information!", 0);
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Person Name!", "Information!", 0);
                 } else {
                     textArea1.setText("");
                     String s = "";
                     Map<String, Long> map = new LinkedHashMap<>();
 
                     try {
-                        map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getOneMonthRecordGivenName(name)))));
+                        map = (report.findDailyShift(report.getDailyList(report.getGivenTollgateListGivenList(report.getOneMonthRecordGivenName(name), entrance, exit)), entrance, exit));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -303,16 +350,19 @@ public class MainWindow extends JFrame {
                 }
             }
 
-            if (claimComboBox.getSelectedItem().equals("Get 3 Months Shift")) {
+            if (claimComboBox.getSelectedItem().equals("Get Person 3 Months Shift")) {
+                String entrance = departureTollgate.getSelectedItem().toString();
+                String exit = arrivalTollgate.getSelectedItem().toString();
+
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!", "Information!", 0);
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Person Name!", "Information!", 0);
                 } else {
                     textArea1.setText("");
                     String s = "";
 
                     Map<String, Long> map = new LinkedHashMap<>();
                     try {
-                        map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getThreeMonthsRecordGivenName(name)))));
+                        map = (report.findDailyShift(report.getDailyList(report.getGivenTollgateListGivenList(report.getThreeMonthsRecordGivenName(name), entrance, exit)), entrance, exit));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -332,16 +382,19 @@ public class MainWindow extends JFrame {
                 }
             }
 
-            if (claimComboBox.getSelectedItem().equals("Get 1 Year Shift")) {
+            if (claimComboBox.getSelectedItem().equals("Get Person 1 Year Shift")) {
+                String entrance = departureTollgate.getSelectedItem().toString();
+                String exit = arrivalTollgate.getSelectedItem().toString();
+
                 if (name.equals("name") || name == null || name.equals("")) {
-                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Name!", "Information!", 0);
+                    JOptionPane.showMessageDialog(new Frame(), "Please Enter Person Name!", "Information!", 0);
                 } else {
                     textArea1.setText("");
                     String s = "";
 
                     Map<String, Long> map = new LinkedHashMap<>();
                     try {
-                        map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getOneYearRecordGivenName(name)))));
+                        map = (report.findDailyShift(report.getDailyList(report.getGivenTollgateListGivenList(report.getOneYearRecordGivenName(name), entrance, exit)), entrance, exit));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -362,6 +415,9 @@ public class MainWindow extends JFrame {
             }
 
             if (claimComboBox.getSelectedItem().equals("Get 1 Month Shift All Records")) {
+                String entrance = departureTollgate.getSelectedItem().toString();
+                String exit = arrivalTollgate.getSelectedItem().toString();
+
                 int dialogButton = JOptionPane.YES_NO_OPTION;
                 dialogResult = JOptionPane.showConfirmDialog(this, "This operation take 2 minute. Do you want to continue anyway?", "Confirmation", dialogButton);
 
@@ -374,7 +430,7 @@ public class MainWindow extends JFrame {
 
                     for (String s1 : nameList) {
                         try {
-                            map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(report.getOneMonthRecordGivenName(s1)))));
+                            map = (report.findDailyShift(report.getDailyList(report.getGivenTollgateListGivenList(report.getOneMonthRecordGivenName(name), entrance, exit)), entrance, exit));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -526,6 +582,9 @@ public class MainWindow extends JFrame {
             }
 
             if (claimComboBox.getSelectedItem().equals("Get Firm 10 Days Shift")) {
+                String entrance = departureTollgate.getSelectedItem().toString();
+                String exit = arrivalTollgate.getSelectedItem().toString();
+
                 if (name.equals("name") || name == null || name.equals("")) {
                     JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
                 } else {
@@ -537,13 +596,14 @@ public class MainWindow extends JFrame {
                     try {
                         map = new LinkedHashMap<>();
                         for (int i = 0; i < l.size(); i++) {
-                            map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(l.get(i)))));
-
-                            Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
-                            while (iter.hasNext()) {
-                                s += iter.next() + " m\n";
+                            map = report.findDailyShift(report.getDailyList(report.getGivenTollgateListGivenList(l.get(i), entrance, exit)), entrance, exit);
+                            if (map.size() > 0) {
+                                Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                                while (iter.hasNext()) {
+                                    s += iter.next() + " m\n";
+                                }
+                                s += "----------------------------------------------------------\n";
                             }
-                            s += "----------------------------------------------------------\n";
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -560,6 +620,9 @@ public class MainWindow extends JFrame {
             }
 
             if (claimComboBox.getSelectedItem().equals("Get Firm 1 Month Shift")) {
+                String entrance = departureTollgate.getSelectedItem().toString();
+                String exit = arrivalTollgate.getSelectedItem().toString();
+
                 if (name.equals("name") || name == null || name.equals("")) {
                     JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
                 } else {
@@ -571,13 +634,14 @@ public class MainWindow extends JFrame {
                     try {
                         map = new LinkedHashMap<>();
                         for (int i = 0; i < l.size(); i++) {
-                            map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(l.get(i)))));
-
-                            Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
-                            while (iter.hasNext()) {
-                                s += iter.next() + " m\n";
+                            map = report.findDailyShift(report.getDailyList(report.getGivenTollgateListGivenList(l.get(i), entrance, exit)), entrance, exit);
+                            if (map.size() > 0) {
+                                Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                                while (iter.hasNext()) {
+                                    s += iter.next() + " m\n";
+                                }
+                                s += "----------------------------------------------------------\n";
                             }
-                            s += "----------------------------------------------------------\n";
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -595,6 +659,9 @@ public class MainWindow extends JFrame {
             }
 
             if (claimComboBox.getSelectedItem().equals("Get Firm 3 Months Shift")) {
+                String entrance = departureTollgate.getSelectedItem().toString();
+                String exit = arrivalTollgate.getSelectedItem().toString();
+
                 if (name.equals("name") || name == null || name.equals("")) {
                     JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
                 } else {
@@ -606,13 +673,14 @@ public class MainWindow extends JFrame {
                     try {
                         map = new LinkedHashMap<>();
                         for (int i = 0; i < l.size(); i++) {
-                            map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(l.get(i)))));
-
-                            Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
-                            while (iter.hasNext()) {
-                                s += iter.next() + " m\n";
+                            map = report.findDailyShift(report.getDailyList(report.getGivenTollgateListGivenList(l.get(i), entrance, exit)), entrance, exit);
+                            if (map.size() > 0) {
+                                Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                                while (iter.hasNext()) {
+                                    s += iter.next() + " m\n";
+                                }
+                                s += "----------------------------------------------------------\n";
                             }
-                            s += "----------------------------------------------------------\n";
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -629,6 +697,9 @@ public class MainWindow extends JFrame {
             }
 
             if (claimComboBox.getSelectedItem().equals("Get Firm 1 Year Shift")) {
+                String entrance = departureTollgate.getSelectedItem().toString();
+                String exit = arrivalTollgate.getSelectedItem().toString();
+
                 if (name.equals("name") || name == null || name.equals("")) {
                     JOptionPane.showMessageDialog(new Frame(), "Please Enter Firm Name!", "Information!", 0);
                 } else {
@@ -640,13 +711,14 @@ public class MainWindow extends JFrame {
                     try {
                         map = new LinkedHashMap<>();
                         for (int i = 0; i < l.size(); i++) {
-                            map = (report.findDailyShift(report.getDailyList(report.getDepartureAndArrivalListGivenList(l.get(i)))));
-
-                            Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
-                            while (iter.hasNext()) {
-                                s += iter.next() + " m\n";
+                            map = report.findDailyShift(report.getDailyList(report.getGivenTollgateListGivenList(l.get(i), entrance, exit)), entrance, exit);
+                            if (map.size() > 0) {
+                                Iterator<Map.Entry<String, Long>> iter = map.entrySet().iterator();
+                                while (iter.hasNext()) {
+                                    s += iter.next() + " m\n";
+                                }
+                                s += "----------------------------------------------------------\n";
                             }
-                            s += "----------------------------------------------------------\n";
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -666,6 +738,8 @@ public class MainWindow extends JFrame {
         });
 
         nameTextField.setEnabled(false);
+        departureTollgate.setEnabled(false);
+        arrivalTollgate.setEnabled(false);
 
         claimComboBox.addActionListener(actionEvent -> {
             if (claimComboBox.getSelectedItem().equals("Get Inside Person") || claimComboBox.getSelectedItem().equals("Get All Records") || claimComboBox.getSelectedItem().equals("Get 1 Month Shift All Records")) {
@@ -680,6 +754,14 @@ public class MainWindow extends JFrame {
             } else {
                 startTimeFormattedTextField.setEnabled(false);
                 endTimeFormattedTextField.setEnabled(false);
+            }
+
+            if (claimComboBox.getSelectedItem().toString().contains("Shift")) {
+                departureTollgate.setEnabled(true);
+                arrivalTollgate.setEnabled(true);
+            } else {
+                departureTollgate.setEnabled(false);
+                arrivalTollgate.setEnabled(false);
             }
 
         });
