@@ -646,7 +646,7 @@ public class Report {
         return dailyList;
     }
 
-    public static Map<String, Long> findDailyShift(List<List<Record>> list,String entrance, String exit) throws ParseException { // turnike giris, cikis or personel giris, cikis 'a gore hesaplandi
+    public static Map<String, Long> findDailyShift(List<List<Record>> list,String entrance, String exit) throws ParseException { // kullanicinin girdigi giris cikis'a gore hesaplandi
         //TODO: G4S guvenlik firmasi oldugu icin normal mesaiden farkli hesaplanacak(cikis - giris seklinde hesaplanmasi gerekiyor)
 
         dailyShiftHashMap = new LinkedHashMap<>();
